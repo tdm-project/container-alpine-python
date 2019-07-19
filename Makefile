@@ -1,6 +1,6 @@
-PLATFORM       ?= arm64v8
-ALPINE-RELEASE ?= 3.9
-PYTHON-VERSION ?= 3.6
+PLATFORM       ?= arm32v7
+ALPINE-RELEASE ?= 3.10
+PYTHON-VERSION ?= 3.7
 
 IMAGE_NAME:=tdmproject/alpine-python-$(shell echo $(PYTHON-VERSION) | cut -f 1 -d '.')
 IMAGE_TAG:=$(PLATFORM)-$(ALPINE-RELEASE)-$(PYTHON-VERSION)
