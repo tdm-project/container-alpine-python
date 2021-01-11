@@ -30,7 +30,7 @@ jobs:
       id: prepare
       run: |
         echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}
-        echo ::set-output name=docker_image_name::${{ DOCKER_TARGET }}-$(echo ${PYTHON_VERSION} | cut -f 1 '.')
+        echo ::set-output name=docker_image_name::${{ env.DOCKER_TARGET }}-$(echo ${PYTHON_VERSION} | cut -f 1 '.')
         echo ::set-output name=docker_image_tag::${{ env.ALPINE_PLATFORM }}-${{ env.ALPINE_RELEASE }}-${{ env.PYTHON_VERSION }}
     -
       name: Login to DockerHub
