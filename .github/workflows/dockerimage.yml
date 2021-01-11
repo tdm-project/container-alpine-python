@@ -8,6 +8,7 @@ env:
   ALPINE_PLATFORM: "arm32v7"
   ALPINE_RELEASE: "3.10"
   PYTHON_VERSION: "3.7"
+  DOCKER_TARGET: "mgaggero/alpine-python"
   DOCKER_TARGET_PLATFORM: "linux/arm/v7"
 
 jobs:
@@ -28,9 +29,8 @@ jobs:
       name: Prepare
       id: prepare
       run: |
-        echo "$(echo $PYTHON_VERSION | cut -f 1 '.')" >> $PYTHON_MAJOR
         echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}
-        echo ::set-output name=docker_image_name::mgaggero/alpine-python-${{ env.PYTHON_MAJOR }}
+        echo ::set-output name=docker_image_name::${{ DOCKER_TARGET }}-$(echo ${PYTHON_VERSION} | cut -f 1 '.')
         echo ::set-output name=docker_image_tag::${{ env.ALPINE_PLATFORM }}-${{ env.ALPINE_RELEASE }}-${{ env.PYTHON_VERSION }}
     -
       name: Login to DockerHub
