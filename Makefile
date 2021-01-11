@@ -9,6 +9,8 @@ IMAGE_TAGNAME:=$(IMAGE_NAME):$(IMAGE_TAG)
 all: build
 
 build:
+	curl -L https://github.com/multiarch/qemu-user-static/releases/download/v4.1.0-1/qemu-arm-static.tar.gz | tar zxvf -
+	chmod +x qemu-arm-static
 	docker build --build-arg PLATFORM=$(PLATFORM) \
 		--build-arg ALPINE_RELEASE=$(ALPINE-RELEASE) \
 		--build-arg PYTHON_VERSION=$(PYTHON-VERSION) \
