@@ -48,4 +48,4 @@ jobs:
         --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
         -t ${{ steps.prepare.outputs.docker_image_name }}:${{ steps.prepare.outputs.docker_image_tag }} \
         --platform ${{ steps.prepare.outputs.docker_platform }} \
-        -f docker/Dockerfile --output type=image .
+        -f docker/Dockerfile --output type=registry .
