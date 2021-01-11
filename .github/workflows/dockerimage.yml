@@ -5,10 +5,10 @@ on:
     branches: [ master ]
 
 env:
-  ALPINE_PLATFORM: arm32v7
-  ALPINE_RELEASE: 3.10
-  PYTHON_VERSION: 3.7
-  DOCKER_TARGET_PLATFORM: linux/arm/v7
+  ALPINE_PLATFORM: "arm32v7"
+  ALPINE_RELEASE: "3.10"
+  PYTHON_VERSION: "3.7"
+  DOCKER_TARGET_PLATFORM: "linux/arm/v7"
 
 jobs:
   buildx:
