@@ -30,7 +30,7 @@ jobs:
       run: |
         echo "$(echo $PYTHON_VERSION | cut -f 1 '.')" >> $PYTHON_MAJOR
         echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}
-        echo ::set-output name=docker_image_name::tdmproject/alpine-python-${{ env.PYTHON_MAJOR }}
+        echo ::set-output name=docker_image_name::mgaggero/alpine-python-${{ env.PYTHON_MAJOR }}
         echo ::set-output name=docker_image_tag::${{ env.ALPINE_PLATFORM }}-${{ env.ALPINE_RELEASE }}-${{ env.PYTHON_VERSION }}
     -
       name: Login to DockerHub
