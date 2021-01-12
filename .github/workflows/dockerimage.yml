@@ -8,7 +8,7 @@ env:
   ALPINE_PLATFORM: "arm32v7"
   ALPINE_RELEASE: "3.10"
   PYTHON_VERSION: "3.7"
-  DOCKER_TARGET: "mgaggero/alpine-python"
+  DOCKER_TARGET_IMAGE: "mgaggero/alpine-python"
   DOCKER_TARGET_PLATFORM: "linux/arm/v7"
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       id: prepare
       run: |
         echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}
-        echo ::set-output name=docker_image_name::${{ env.DOCKER_TARGET }}-$(echo ${PYTHON_VERSION} | cut -f 1 -d '.')
+        echo ::set-output name=docker_image_name::${{ env.DOCKER_TARGET_IMAGE }}-$(echo ${PYTHON_VERSION} | cut -f 1 -d '.')
         echo ::set-output name=docker_image_tag::${{ env.ALPINE_PLATFORM }}-${{ env.ALPINE_RELEASE }}-${{ env.PYTHON_VERSION }}
     -
       name: Login to DockerHub
@@ -43,10 +43,12 @@ jobs:
       run: |
         curl -L https://github.com/multiarch/qemu-user-static/releases/download/v4.1.0-1/qemu-arm-static.tar.gz | tar zxvf -
         chmod +x qemu-arm-static
+
         docker buildx build \
         --build-arg PLATFORM=${{ env.ALPINE_PLATFORM }} \
         --build-arg ALPINE_RELEASE=${{ env.ALPINE_RELEASE }} \
         --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
         -t ${{ steps.prepare.outputs.docker_image_name }}:${{ steps.prepare.outputs.docker_image_tag }} \
+        -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }}-${{ env.ALPINE_RELEASE }} \
         --platform ${{ steps.prepare.outputs.docker_platform }} \
         -f docker/Dockerfile --output type=registry .
