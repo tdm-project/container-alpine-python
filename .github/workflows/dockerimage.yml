@@ -6,14 +6,23 @@ on:
 
 env:
   ALPINE_PLATFORM: "arm32v7"
-  ALPINE_RELEASE: "3.10"
-  PYTHON_VERSION: "3.7"
   DOCKER_TARGET_IMAGE: "tdmproject/alpine-python"
   DOCKER_TARGET_PLATFORM: "linux/arm/v7"
 
 jobs:
   buildx:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        alpine_release: ["3.10", "3.13"]
+        python_version: ["3.7", "3.8"]
+        exclude:
+          # There's no Python 3.7 for Alpine 3.13
+          - alpine_release: "3.13"
+            python_version: "3.7"
+          # Exclude Python 3.8 for Alpine 3.10
+          - alpine_release: "3.10"
+            python_version: "3.8"
     steps:
     -
       name: Checkout the code
@@ -30,8 +39,8 @@ jobs:
       id: prepare
       run: |
         echo ::set-output name=docker_platform::${DOCKER_TARGET_PLATFORM}
-        echo ::set-output name=docker_image_name::${{ env.DOCKER_TARGET_IMAGE }}-$(echo ${PYTHON_VERSION} | cut -f 1 -d '.')
-        echo ::set-output name=docker_image_tag::${{ env.ALPINE_PLATFORM }}-${{ env.ALPINE_RELEASE }}-${{ env.PYTHON_VERSION }}
+        echo ::set-output name=docker_image_name::${{ env.DOCKER_TARGET_IMAGE }}-$(echo ${{ matrix.python_version }} | cut -f 1 -d '.')
+        echo ::set-output name=docker_image_tag::${{ env.ALPINE_PLATFORM }}-${{ matrix.alpine_release }}-${{ matrix.python_version }}
     -
       name: Login to DockerHub
       uses: docker/login-action@v1
@@ -46,10 +55,9 @@ jobs:
 
         docker buildx build \
         --build-arg PLATFORM=${{ env.ALPINE_PLATFORM }} \
-        --build-arg ALPINE_RELEASE=${{ env.ALPINE_RELEASE }} \
-        --build-arg PYTHON_VERSION=${{ env.PYTHON_VERSION }} \
+        --build-arg ALPINE_RELEASE=${{ matrix.alpine_release }} \
+        --build-arg PYTHON_VERSION=${{ matrix.python_version }} \
         -t ${{ steps.prepare.outputs.docker_image_name }}:${{ steps.prepare.outputs.docker_image_tag }} \
-        -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }}-${{ env.ALPINE_RELEASE }} \
-        -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }} \
+        -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }}-${{ matrix.alpine_release }} \
         --platform ${{ steps.prepare.outputs.docker_platform }} \
         -f docker/Dockerfile --output type=registry .
