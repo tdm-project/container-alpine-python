@@ -61,3 +61,18 @@ jobs:
         -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }}-${{ matrix.alpine_release }} \
         --platform ${{ steps.prepare.outputs.docker_platform }} \
         -f docker/Dockerfile --output type=registry .
+    -
+      name: Build Sklearn Image
+      if: ${{ matrix.alpine_release == "3.13" }}
+      run: |
+        curl -L https://github.com/multiarch/qemu-user-static/releases/download/v4.1.0-1/qemu-arm-static.tar.gz | tar zxvf -
+        chmod +x qemu-arm-static
+
+        docker buildx build \
+        --build-arg PLATFORM=${{ env.ALPINE_PLATFORM }} \
+        --build-arg ALPINE_RELEASE=${{ matrix.alpine_release }} \
+        --build-arg PYTHON_VERSION=${{ matrix.python_version }} \
+        -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }}-sklearn \
+        -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }}-${{ matrix.alpine_release }}-sklearn \
+        --platform ${{ steps.prepare.outputs.docker_platform }} \
+        -f docker/Dockerfile.sklearn --output type=registry .
