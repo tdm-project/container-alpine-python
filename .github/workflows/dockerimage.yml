@@ -63,7 +63,7 @@ jobs:
         -f docker/Dockerfile --output type=registry .
     -
       name: Build Sklearn Image
-      if: ${{ matrix.alpine_release == "3.13" }}
+      if: ${{ matrix.alpine_release == '3.13' }}
       run: |
         curl -L https://github.com/multiarch/qemu-user-static/releases/download/v4.1.0-1/qemu-arm-static.tar.gz | tar zxvf -
         chmod +x qemu-arm-static
