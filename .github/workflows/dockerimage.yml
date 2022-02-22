@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        alpine_release: ["3.10", "3.13"]
+        alpine_release: ["3.10", "3.13", "3.15"]
         python_version: ["3.7", "3.8"]
         exclude:
-          # There's no Python 3.7 for Alpine 3.13
-          - alpine_release: "3.13"
+          # There's no Python 3.7 for Alpine 3.13 and later
+          - alpine_release: ["3.13", "3.15"]
             python_version: "3.7"
           # Exclude Python 3.8 for Alpine 3.10
           - alpine_release: "3.10"
@@ -62,7 +62,7 @@ jobs:
         --platform ${{ steps.prepare.outputs.docker_platform }} \
         -f docker/Dockerfile --output type=registry .
     -
-      name: Build Sklearn Image
+      name: Build Sklearn Image (obsolete)
       if: ${{ matrix.alpine_release == '3.13' }}
       run: |
         curl -L https://github.com/multiarch/qemu-user-static/releases/download/v4.1.0-1/qemu-arm-static.tar.gz | tar zxvf -
@@ -76,3 +76,18 @@ jobs:
         -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }}-${{ matrix.alpine_release }}-sklearn \
         --platform ${{ steps.prepare.outputs.docker_platform }} \
         -f docker/Dockerfile.sklearn --output type=registry .
+    -
+      name: Build Data Science Image
+      if: ${{ matrix.alpine_release == '3.15' }}
+      run: |
+        curl -L https://github.com/multiarch/qemu-user-static/releases/download/v4.1.0-1/qemu-arm-static.tar.gz | tar zxvf -
+        chmod +x qemu-arm-static
+
+        docker buildx build \
+        --build-arg PLATFORM=${{ env.ALPINE_PLATFORM }} \
+        --build-arg ALPINE_RELEASE=${{ matrix.alpine_release }} \
+        --build-arg PYTHON_VERSION=${{ matrix.python_version }} \
+        -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }}-datascience \
+        -t ${{ steps.prepare.outputs.docker_image_name }}:${{ env.ALPINE_PLATFORM }}-${{ matrix.alpine_release }}-datascience \
+        --platform ${{ steps.prepare.outputs.docker_platform }} \
+        -f docker/Dockerfile.datascience --output type=registry .
