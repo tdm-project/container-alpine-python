@@ -19,12 +19,18 @@ jobs:
         exclude:
           # Exclude Python 3.8 and 3.9 for Alpine 3.10
           - alpine_release: "3.10"
-            python_version: ["3.8", "3.9"]
+            python_version: "3.8"
+          - alpine_release: "3.10"
+            python_version: "3.9"
           # There's no Python 3.7 for Alpine 3.13 and later
           - alpine_release: "3.13"
-            python_version: ["3.7", "3.9"]
+            python_version: "3.7"
+          - alpine_release: "3.13"
+            python_version: "3.9"
           - alpine_release: "3.15"
-            python_version: ["3.7", "3.8"]
+            python_version: "3.7"
+          - alpine_release: "3.15"
+            python_version: "3.8"
     steps:
     -
       name: Checkout the code
